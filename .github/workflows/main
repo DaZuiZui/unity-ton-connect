@@ -1,0 +1,39 @@
+name: Deploy Unity WebGL to GitHub Pages
+
+on:
+  push:
+    branches: ["dev"]   # 监听 dev 分支的推送，触发部署
+  workflow_dispatch:  # 支持手动触发
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 检出当前仓库
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 设置 GitHub Pages 配置
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # 上传 WebGL 构建文件夹（假设构建文件夹是 Build，按需修改）
+      - name: Upload WebGL build files
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './Build'  # 请替换为你的 Unity 构建文件夹路径
+
+      # 部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
